@@ -1,4 +1,8 @@
-# Welcome to your Expo app 👋
+# Ascendia - Dynamic Form Generator
+
+A React Native Expo app that generates dynamic forms from JSON configuration.
+
+![App Screenshot](ss.png)
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -7,7 +11,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 1. Install dependencies
 
    ```bash
-   npm install
+   bun install
    ```
 
 2. Start the app
