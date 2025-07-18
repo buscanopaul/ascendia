@@ -15,7 +15,12 @@
       "ID": "hello-button",
       "Type": "Button",
       "Title": "Say hi",
-      "AlertMessage": "Hello ${person-name}"
+      "AlertMessage": "Hello ${person-name}",
+      "VisibleCondition": {
+        "ID": "person-name",
+        "Operator": "Equals",
+        "Value": "Peter"
+      }
     }
   ]
 }

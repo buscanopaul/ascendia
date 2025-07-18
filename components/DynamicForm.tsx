@@ -1,5 +1,18 @@
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+interface VisibleCondition {
+  ID: string;
+  Operator: 'Equals' | 'NotEquals';
+  Value: string;
+}
 
 interface Field {
   Type: string;
@@ -8,6 +21,7 @@ interface Field {
   Placeholder?: string;
   Title?: string;
   AlertMessage?: string;
+  VisibleCondition?: VisibleCondition;
 }
 
 interface FormConfig {
@@ -24,7 +38,7 @@ export default function DynamicForm({ config }: DynamicFormProps) {
   const [formData, setFormData] = useState({});
 
   const handleInputChange = (id: string, value: string) => {
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const parseAlertMessage = (message: string): string => {
@@ -38,7 +52,32 @@ export default function DynamicForm({ config }: DynamicFormProps) {
     Alert.alert('Message', parsedMessage);
   };
 
+  const evaluateCondition = (condition: VisibleCondition): boolean => {
+    const fieldValue = formData[condition.ID as keyof typeof formData] || '';
+
+    switch (condition.Operator) {
+      case 'Equals':
+        return fieldValue === condition.Value;
+      case 'NotEquals':
+        return fieldValue !== condition.Value;
+      default:
+        return true;
+    }
+  };
+
+  const isFieldVisible = (field: Field): boolean => {
+    if (!field.VisibleCondition) {
+      return true;
+    }
+    return evaluateCondition(field.VisibleCondition);
+  };
+
   const renderField = (field: Field, index: number) => {
+    // Check if field should be visible
+    if (!isFieldVisible(field)) {
+      return null;
+    }
+
     switch (field.Type) {
       case 'H1':
         return (
@@ -46,7 +85,7 @@ export default function DynamicForm({ config }: DynamicFormProps) {
             {field.Text}
           </Text>
         );
-      
+
       case 'Text':
         return (
           <TextInput
@@ -57,7 +96,7 @@ export default function DynamicForm({ config }: DynamicFormProps) {
             onChangeText={(value) => handleInputChange(field.ID!, value)}
           />
         );
-      
+
       case 'Button':
         return (
           <TouchableOpacity
@@ -68,7 +107,7 @@ export default function DynamicForm({ config }: DynamicFormProps) {
             <Text style={styles.buttonText}>{field.Title}</Text>
           </TouchableOpacity>
         );
-      
+
       default:
         return null;
     }
